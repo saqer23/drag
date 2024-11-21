@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  username String @unique
+  password String
+}
+
+model Drag {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  type         String
+  company      String
+  dragEffects1 DragEffect[] @relation("DragEffects1")
+  dragEffects2 DragEffect[] @relation("DragEffects2")
+}
+
+model DragEffect {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  drag1Id String  @db.ObjectId
+  drag2Id String  @db.ObjectId
+  status  Boolean
+  content String?
+  drag1   Drag    @relation("DragEffects1", fields: [drag1Id], references: [id])
+  drag2   Drag    @relation("DragEffects2", fields: [drag2Id], references: [id])
+}
